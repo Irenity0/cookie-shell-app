@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   darkMode: ["class"],
@@ -94,9 +94,10 @@ const config: Config = {
       },
       fontFamily: {
         mono: ["Monaco", "Consolas", "Courier New", "monospace"],
+        cookie: ['"Cute Font"', 'mono'],
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
-export default config
+};
+export default config;

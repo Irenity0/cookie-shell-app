@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className='font-cookie text-3xl'>{children}</body>
     </html>
   )
 }

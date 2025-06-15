@@ -160,13 +160,13 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
     <div
       className={`${
         isDarkTheme ? "bg-[#895737]" : "bg-gradient-to-br from-amber-100 to-orange-50"
-      } rounded-2xl shadow-2xl border-4 ${isDarkTheme ? "border-[#693323]" : "border-amber-200"} overflow-hidden`}
+      } rounded-2xl shadow-2xl border-4 ${isDarkTheme ? "border-[#593720]" : "border-amber-200"} overflow-hidden`}
     >
       <div
         className={`${
-          isDarkTheme ? "bg-[#773b2ae1]" : "bg-amber-200"
+          isDarkTheme ? "bg-[#643e25]" : "bg-amber-200"
         } px-4 py-2 flex items-center justify-between border-b-2 ${
-          isDarkTheme ? "border-[#693323]" : "border-amber-300"
+          isDarkTheme ? "border-[#593720]" : "border-amber-300"
         }`}
       >
         <div className="flex items-center space-x-2">
@@ -177,7 +177,7 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
         <div className="flex items-center space-x-4">
           <button
             onClick={() => setIsDarkTheme(!isDarkTheme)}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
+            className={`px-3 py-1 rounded-full text-2xl font-semibold transition-all duration-200 ${
               isDarkTheme
                 ? "bg-[#693323] text-amber-100 hover:bg-[693323]"
                 : "bg-amber-300 text-amber-800 hover:bg-amber-400"
@@ -193,8 +193,8 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
 
       <div
         ref={terminalRef}
-        className={`p-4 h-96 overflow-y-auto font-mono text-sm ${
-          isDarkTheme ? "bg-[#773b2ae1]" : "bg-gradient-to-b from-amber-50 to-orange-50"
+        className={`p-4 h-96 overflow-y-auto font-mono text-base font- ${
+          isDarkTheme ? "bg-[#694127]" : "bg-gradient-to-b from-amber-50 to-orange-50"
         }`}
         style={{ fontFamily: 'Monaco, Consolas, "Courier New", monospace' }}
       >
@@ -202,7 +202,7 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
 
         {isActive && (
           <div className="flex items-center">
-            <span className={`${isDarkTheme ? "text-amber-300" : "text-amber-700"} font-semibold mr-2`}>
+            <span className={`${isDarkTheme ? "text-amber-300 text-xl font-cookie" : "text-amber-700"} font-semibold mr-2 text-xl font-cookie`}>
               cookie 🍪 ~ $
             </span>
             <input

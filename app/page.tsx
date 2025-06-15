@@ -14,13 +14,13 @@ export default function CookieShell() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-6">
           <h1
-            className={`text-4xl font-bold ${
+            className={`text-5xl font-bold ${
               isDarkTheme ? "text-amber-200" : "text-amber-800"
             } mb-2 transition-colors duration-300`}
           >
             🍪 Cookie Shell 🍪
           </h1>
-          <p className={`${isDarkTheme ? "text-amber-300" : "text-amber-700"} transition-colors duration-300`}>
+          <p className={`${isDarkTheme ? "text-amber-300 font-cookie" : "text-amber-700"} transition-colors duration-300 font-cookie`}>
             A deliciously interactive terminal experience
           </p>
         </div>
