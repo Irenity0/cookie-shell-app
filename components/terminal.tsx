@@ -242,7 +242,7 @@ const colorMap: { [key: string]: string } = {
             <span
               className={`${
                 isDarkTheme
-                  ? "text-amber300 text-base font-cookie"
+                  ? "text-amber-300 text-base font-cookie"
                   : "text-amber-700"
               } font-semibold mr-2 text-base font-cookie`}
             >
