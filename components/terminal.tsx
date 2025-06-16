@@ -254,9 +254,9 @@ const colorMap: { [key: string]: string } = {
               value={currentInput}
               onChange={(e) => setCurrentInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              className={`flex-1 bg-transparent outline-none ${
-                isDarkTheme ? "text-amber-100" : "text-amber-900"
-              } caret-transparent`}
+                className={`flex-1 bg-transparent outline-none ${
+    isDarkTheme ? "text-amber-200/75" : "text-amber-900"
+  } caret-transparent`}
               autoFocus
             />
             <span
