@@ -11,20 +11,21 @@ interface TerminalProps {
 }
 
 export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
+  
   const [currentFolder, setCurrentFolder] = useState<Folder>("root");
-
   const [lines, setLines] = useState<TerminalLine[]>([
     {
       type: "output",
       content: "🍪 Welcome to Cookie Shell! 🍪",
- className: isDarkTheme ? "text-amber-500" : "text-amber-600", // two shades lighter than default
+      className: isDarkTheme ? "text-amber-500" : "text-amber-600",
     },
     {
       type: "output",
       content: 'Type "cookie help" to see available commands.',
-       className: isDarkTheme ? "text-amber-500" : "text-amber-600",
+      className: isDarkTheme ? "text-amber-500" : "text-amber-600",
     },
   ]);
+
   const [currentInput, setCurrentInput] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [gameState, setGameState] = useState<any>(null);
@@ -125,7 +126,7 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
         <div key={index} className="flex items-center mb-1">
           <span
             className={`${
-              isDarkTheme ? "text-amber-300" : "text-amber-700"
+              isDarkTheme ? "text-amber-400" : "text-amber-700"
             } font-semibold mr-2 text-base`}
           >
             cookie 🍪 ~ {currentFolder} $
@@ -140,44 +141,41 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
     }
 
     const getThemeClassName = (originalClass?: string): string => {
-const colorMap: { [key: string]: string } = {
-  "text-amber-800": "text-amber-200",
-  "text-orange-600": "text-orange-300",
-  "text-amber-600": "text-amber-300",
-  "text-amber-500": "text-amber-500",
-  "text-green-600": "text-green-400",
-  "text-purple-600": "text-purple-400",
-  "text-blue-600": "text-blue-400",
-  "text-lime-600": "text-lime-600",
-  "text-red-600": "text-red-400",
-  "text-amber-700": "text-amber-200", // strict fallback support
+      const colorMap: { [key: string]: string } = {
+        "text-amber-800": "text-amber-200",
+        "text-orange-600": "text-orange-300",
+        "text-amber-600": "text-amber-300",
+        "text-amber-500": "text-amber-500",
+        "text-green-600": "text-green-400",
+        "text-purple-600": "text-purple-400",
+        "text-blue-600": "text-blue-400",
+        "text-lime-600": "text-lime-600",
+        "text-red-600": "text-red-400",
+        "text-amber-700": "text-amber-200",
 
-  // Additional mappings based on your colors
-  "text-cyan-500": "text-cyan-500",     // assuming dark cyan-400 → light cyan-500
-  "text-lime-400": "text-lime-600",     // darker lime in dark mode maps to lighter lime in light
-  "text-red-400": "text-red-600",       // lighter red in dark maps to darker red in light
-  "text-rose-400": "text-rose-700",     // lighter rose pink in dark → darker rose in light
-  "text-red-700": "text-red-800",       // dark red variants
-  "text-yellow-400": "text-yellow-700", // yellow mapping for warning
-  "text-amber-300": "text-amber-600",   // lighter amber in dark → medium amber in light
-  "text-amber-200": "text-amber-700",   // light amber → darker amber in light mode
-};
+        // Additional mappings based on your colors
+        "text-cyan-500": "text-cyan-500", // assuming dark cyan-400 → light cyan-500
+        "text-lime-400": "text-lime-600", // darker lime in dark mode maps to lighter lime in light
+        "text-red-400": "text-red-600", // lighter red in dark maps to darker red in light
+        "text-rose-400": "text-rose-700", // lighter rose pink in dark → darker rose in light
+        "text-red-700": "text-red-800", // dark red variants
+        "text-yellow-400": "text-yellow-700", // yellow mapping for warning
+        "text-amber-300": "text-amber-600", // lighter amber in dark → medium amber in light
+        "text-amber-200": "text-amber-700", // light amber → darker amber in light mode
+      };
 
+      const fallback = isDarkTheme ? "text-amber-200" : "text-amber-700";
+      if (!originalClass) return fallback;
 
-  const fallback = isDarkTheme ? "text-amber-200" : "text-amber-700";
-  if (!originalClass) return fallback;
-
-  return isDarkTheme ? colorMap[originalClass] || fallback : originalClass;
-};
-
+      return isDarkTheme ? colorMap[originalClass] || fallback : originalClass;
+    };
 
     return (
       <div
         key={index}
-          className={`mb-1 whitespace-pre-wrap ${getThemeClassName(
-    line.className || (isDarkTheme ? "text-amber-200" : "text-amber-800")
-  )}`}
-
+        className={`mb-1 whitespace-pre-wrap ${getThemeClassName(
+          line.className || (isDarkTheme ? "text-amber-200" : "text-amber-800")
+        )}`}
         dangerouslySetInnerHTML={{ __html: line.content }}
       />
     );
@@ -208,13 +206,13 @@ const colorMap: { [key: string]: string } = {
         <div className="flex items-center space-x-4">
           <button
             onClick={() => setIsDarkTheme(!isDarkTheme)}
-            className={`px-3 py-1 rounded-full text-2xl font-semibold transition-all duration-200 ${
+            className={`px-3 py-1 w-20 rounded-full text-2xl font-semibold transition-all duration-200 ${
               isDarkTheme
                 ? "bg-[#693323] text-amber-100 hover:bg-[693323]"
                 : "bg-amber-300 text-amber-800 hover:bg-amber-400"
             }`}
           >
-            {isDarkTheme ? "☀️ Light" : "🌙 Dark"}
+            {isDarkTheme ? "baked" : "unbaked"}
           </button>
           <span
             className={`${
@@ -241,9 +239,7 @@ const colorMap: { [key: string]: string } = {
           <div className="flex items-center">
             <span
               className={`${
-                isDarkTheme
-                  ? "text-amber-300 text-base font-cookie"
-                  : "text-amber-700"
+                isDarkTheme ? "text-amber-400" : "text-amber-700"
               } font-semibold mr-2 text-base font-cookie`}
             >
               cookie 🍪 ~ {currentFolder} $
@@ -254,9 +250,9 @@ const colorMap: { [key: string]: string } = {
               value={currentInput}
               onChange={(e) => setCurrentInput(e.target.value)}
               onKeyDown={handleKeyDown}
-                className={`flex-1 bg-transparent outline-none ${
-    isDarkTheme ? "text-amber-200/75" : "text-amber-900"
-  } caret-transparent`}
+              className={`flex-1 bg-transparent outline-none ${
+                isDarkTheme ? "text-amber-200/75" : "text-amber-900"
+              } caret-transparent`}
               autoFocus
             />
             <span

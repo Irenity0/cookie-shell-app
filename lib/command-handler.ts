@@ -1,6 +1,7 @@
 // ✅ At the top of command-handler.ts
 import type { CommandResult, Folder, GameState, TerminalLine } from "@/types/terminal";
 import { fortunes } from "./fortunes";
+import { cookieEasterEggs } from "./easterEggs";
 
 
 export class CommandHandler {
@@ -8,6 +9,7 @@ export class CommandHandler {
   // This execute() takes currentFolder and setCurrentFolder to track folders
 
   async execute(
+    
     input: string,
     gameState: GameState | null,
     setGameState: (state: GameState | null) => void,
@@ -17,6 +19,8 @@ export class CommandHandler {
     setCurrentFolder: React.Dispatch<React.SetStateAction<Folder>>
   ): Promise<CommandResult> {
     const command = input.trim();
+
+    
 
     // If a game is active, delegate to game handler (not shown here)
     if (gameState?.isActive) {
@@ -57,24 +61,26 @@ export class CommandHandler {
 
     // Main cookie commands start with "cookie"
     if (/^cookie\b/i.test(command)) {
-      // Split command into words, ignoring case
+      // 🥚 Easter Egg Commands (must be exact matches like "cookie matrix")
+      const cmdKey = command.toLowerCase() as keyof typeof cookieEasterEggs;
+if (cmdKey in cookieEasterEggs) {
+  return cookieEasterEggs[cmdKey]();
+}
+
+
       const parts = command.split(/\s+/);
-      // Base command like "cookie", "cookie bake", "cookie bonk", etc.
       const baseCmd = parts.slice(0, 2).join(" ").toLowerCase();
       const args = parts.slice(2);
 
-      // cookie help always shows folder-specific help
       if (command.toLowerCase() === "cookie help") {
         return this.showHelp(currentFolder);
       }
 
-      // Basic commands available everywhere
       const basicCommands = ["cookie clear", "cookie exit", "cookie ls", "cookie nerd", "cookie theme"];
       if (basicCommands.includes(command.toLowerCase())) {
         return this.handleBasicCommands(command.toLowerCase());
       }
 
-      // Folder-specific commands
       if (currentFolder === "cookie jar") {
         return this.handleCookieJarCommands(baseCmd, args);
       } else if (currentFolder === "evil cookie jar") {
