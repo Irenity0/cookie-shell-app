@@ -3,7 +3,7 @@
 import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import { CommandHandler } from "@/lib/command-handler";
-import type { TerminalLine } from "@/types/terminal";
+import type { Folder, TerminalLine } from "@/types/terminal";
 
 interface TerminalProps {
   isDarkTheme: boolean;
@@ -11,17 +11,18 @@ interface TerminalProps {
 }
 
 export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
-  const [currentFolder, setCurrentFolder] = useState("cookie jar"); // or initial folder
+  const [currentFolder, setCurrentFolder] = useState<Folder>("root");
+
   const [lines, setLines] = useState<TerminalLine[]>([
     {
       type: "output",
       content: "🍪 Welcome to Cookie Shell! 🍪",
-      timestamp: Date.now(),
+ className: isDarkTheme ? "text-amber-500" : "text-amber-600", // two shades lighter than default
     },
     {
       type: "output",
       content: 'Type "cookie help" to see available commands.',
-      timestamp: Date.now(),
+       className: isDarkTheme ? "text-amber-500" : "text-amber-600",
     },
   ]);
   const [currentInput, setCurrentInput] = useState("");
@@ -74,9 +75,9 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
         gameState,
         setGameState,
         setLines,
-        newLines, // updated TerminalLine[]
-        currentFolder, // make sure this is defined in your component
-        setCurrentFolder // and this too
+        newLines,
+        currentFolder,
+        setCurrentFolder
       );
 
       if (result.type === "clear") {
@@ -87,7 +88,6 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
           {
             type: "output",
             content: result.content,
-            timestamp: Date.now(),
           },
         ]);
         setIsActive(false);
@@ -97,7 +97,6 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
           {
             type: "output",
             content: result.content,
-            timestamp: Date.now(),
             className: result.className,
           },
         ]);
@@ -108,7 +107,6 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
         {
           type: "output",
           content: "An error occurred while processing your command.",
-          timestamp: Date.now(),
         },
       ]);
     }
@@ -141,26 +139,45 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
       );
     }
 
-    const getThemeClassName = (originalClass: string) => {
-      if (!isDarkTheme) return originalClass;
-      const colorMap: { [key: string]: string } = {
-        "text-amber-800": "text-amber-200",
-        "text-orange-600": "text-orange-300",
-        "text-amber-600": "text-amber-300",
-        "text-green-600": "text-green-400",
-        "text-purple-600": "text-purple-400",
-        "text-blue-600": "text-blue-400",
-        "text-red-600": "text-red-400",
-      };
-      return colorMap[originalClass] || originalClass;
-    };
+    const getThemeClassName = (originalClass?: string): string => {
+const colorMap: { [key: string]: string } = {
+  "text-amber-800": "text-amber-200",
+  "text-orange-600": "text-orange-300",
+  "text-amber-600": "text-amber-300",
+  "text-amber-500": "text-amber-500",
+  "text-green-600": "text-green-400",
+  "text-purple-600": "text-purple-400",
+  "text-blue-600": "text-blue-400",
+  "text-lime-600": "text-lime-600",
+  "text-red-600": "text-red-400",
+  "text-amber-700": "text-amber-200", // strict fallback support
+
+  // Additional mappings based on your colors
+  "text-cyan-500": "text-cyan-500",     // assuming dark cyan-400 → light cyan-500
+  "text-lime-400": "text-lime-600",     // darker lime in dark mode maps to lighter lime in light
+  "text-red-400": "text-red-600",       // lighter red in dark maps to darker red in light
+  "text-rose-400": "text-rose-700",     // lighter rose pink in dark → darker rose in light
+  "text-red-700": "text-red-800",       // dark red variants
+  "text-yellow-400": "text-yellow-700", // yellow mapping for warning
+  "text-amber-300": "text-amber-600",   // lighter amber in dark → medium amber in light
+  "text-amber-200": "text-amber-700",   // light amber → darker amber in light mode
+};
+
+
+  const fallback = isDarkTheme ? "text-amber-200" : "text-amber-700";
+  if (!originalClass) return fallback;
+
+  return isDarkTheme ? colorMap[originalClass] || fallback : originalClass;
+};
+
 
     return (
       <div
         key={index}
-        className={`mb-1 whitespace-pre-wrap ${getThemeClassName(
-          line.className || (isDarkTheme ? "text-amber-200" : "text-amber-800")
-        )}`}
+          className={`mb-1 whitespace-pre-wrap ${getThemeClassName(
+    line.className || (isDarkTheme ? "text-amber-200" : "text-amber-800")
+  )}`}
+
         dangerouslySetInnerHTML={{ __html: line.content }}
       />
     );
