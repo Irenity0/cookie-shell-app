@@ -1,18 +1,17 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState, useEffect, useRef } from "react"
-import { CommandHandler } from "@/lib/command-handler"
-import type { TerminalLine } from "@/types/terminal"
+import type React from "react";
+import { useState, useEffect, useRef } from "react";
+import { CommandHandler } from "@/lib/command-handler";
+import type { TerminalLine } from "@/types/terminal";
 
 interface TerminalProps {
-  isDarkTheme: boolean
-  setIsDarkTheme: (theme: boolean) => void
+  isDarkTheme: boolean;
+  setIsDarkTheme: (theme: boolean) => void;
 }
 
 export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
-  // Remove this line: const [isDarkTheme, setIsDarkTheme] = useState(false)
+  const [currentFolder, setCurrentFolder] = useState("cookie jar"); // or initial folder
   const [lines, setLines] = useState<TerminalLine[]>([
     {
       type: "output",
@@ -24,46 +23,42 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
       content: 'Type "cookie help" to see available commands.',
       timestamp: Date.now(),
     },
-  ])
-  const [currentInput, setCurrentInput] = useState("")
-  const [isActive, setIsActive] = useState(true)
-  const [gameState, setGameState] = useState<any>(null)
-  const [showCursor, setShowCursor] = useState(true)
+  ]);
+  const [currentInput, setCurrentInput] = useState("");
+  const [isActive, setIsActive] = useState(true);
+  const [gameState, setGameState] = useState<any>(null);
+  const [showCursor, setShowCursor] = useState(true);
 
-  const inputRef = useRef<HTMLInputElement>(null)
-  const terminalRef = useRef<HTMLDivElement>(null)
-  const commandHandler = new CommandHandler()
+  const inputRef = useRef<HTMLInputElement>(null);
+  const terminalRef = useRef<HTMLDivElement>(null);
+  const commandHandler = new CommandHandler();
 
-  // Blinking cursor effect
   useEffect(() => {
     const interval = setInterval(() => {
-      setShowCursor((prev) => !prev)
-    }, 500)
-    return () => clearInterval(interval)
-  }, [])
+      setShowCursor((prev) => !prev);
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
-  }, [lines])
+  }, [lines]);
 
-  // Focus input when clicking terminal
   useEffect(() => {
     const handleClick = () => {
       if (isActive && inputRef.current) {
-        inputRef.current.focus()
+        inputRef.current.focus();
       }
-    }
-    document.addEventListener("click", handleClick)
-    return () => document.removeEventListener("click", handleClick)
-  }, [isActive])
+    };
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, [isActive]);
 
   const handleCommand = async (input: string) => {
-    if (!input.trim()) return
+    if (!input.trim()) return;
 
-    // Add command to history
     const newLines = [
       ...lines,
       {
@@ -71,13 +66,21 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
         content: input,
         timestamp: Date.now(),
       },
-    ]
+    ];
 
     try {
-      const result = await commandHandler.execute(input, gameState, setGameState)
+      const result = await commandHandler.execute(
+        input,
+        gameState,
+        setGameState,
+        setLines,
+        newLines, // updated TerminalLine[]
+        currentFolder, // make sure this is defined in your component
+        setCurrentFolder // and this too
+      );
 
       if (result.type === "clear") {
-        setLines([])
+        setLines([]);
       } else if (result.type === "exit") {
         setLines([
           ...newLines,
@@ -86,8 +89,8 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
             content: result.content,
             timestamp: Date.now(),
           },
-        ])
-        setIsActive(false)
+        ]);
+        setIsActive(false);
       } else {
         setLines([
           ...newLines,
@@ -97,7 +100,7 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
             timestamp: Date.now(),
             className: result.className,
           },
-        ])
+        ]);
       }
     } catch (error) {
       setLines([
@@ -107,33 +110,39 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
           content: "An error occurred while processing your command.",
           timestamp: Date.now(),
         },
-      ])
+      ]);
     }
-  }
+  };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && isActive) {
-      handleCommand(currentInput)
-      setCurrentInput("")
+      handleCommand(currentInput);
+      setCurrentInput("");
     }
-  }
+  };
 
   const renderLine = (line: TerminalLine, index: number) => {
     if (line.type === "command") {
       return (
         <div key={index} className="flex items-center mb-1">
-          <span className={`${isDarkTheme ? "text-amber-300" : "text-amber-700"} font-semibold mr-2`}>
-            cookie 🍪 ~ $
+          <span
+            className={`${
+              isDarkTheme ? "text-amber-300" : "text-amber-700"
+            } font-semibold mr-2 text-base`}
+          >
+            cookie 🍪 ~ {currentFolder} $
           </span>
-          <span className={`${isDarkTheme ? "text-amber-100" : "text-amber-900"}`}>{line.content}</span>
+          <span
+            className={`${isDarkTheme ? "text-amber-100" : "text-amber-900"}`}
+          >
+            {line.content}
+          </span>
         </div>
-      )
+      );
     }
 
     const getThemeClassName = (originalClass: string) => {
-      if (!isDarkTheme) return originalClass
-
-      // Map light theme colors to dark theme equivalents
+      if (!isDarkTheme) return originalClass;
       const colorMap: { [key: string]: string } = {
         "text-amber-800": "text-amber-200",
         "text-orange-600": "text-orange-300",
@@ -142,25 +151,30 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
         "text-purple-600": "text-purple-400",
         "text-blue-600": "text-blue-400",
         "text-red-600": "text-red-400",
-      }
-
-      return colorMap[originalClass] || originalClass
-    }
+      };
+      return colorMap[originalClass] || originalClass;
+    };
 
     return (
       <div
         key={index}
-        className={`mb-1 whitespace-pre-wrap ${getThemeClassName(line.className || (isDarkTheme ? "text-amber-200" : "text-amber-800"))}`}
+        className={`mb-1 whitespace-pre-wrap ${getThemeClassName(
+          line.className || (isDarkTheme ? "text-amber-200" : "text-amber-800")
+        )}`}
         dangerouslySetInnerHTML={{ __html: line.content }}
       />
-    )
-  }
+    );
+  };
 
   return (
     <div
       className={`${
-        isDarkTheme ? "bg-[#895737]" : "bg-gradient-to-br from-amber-100 to-orange-50"
-      } rounded-2xl shadow-2xl border-4 ${isDarkTheme ? "border-[#593720]" : "border-amber-200"} overflow-hidden`}
+        isDarkTheme
+          ? "bg-[#895737]"
+          : "bg-gradient-to-br from-amber-100 to-orange-50"
+      } rounded-2xl shadow-2xl border-4 ${
+        isDarkTheme ? "border-[#593720]" : "border-amber-200"
+      } overflow-hidden`}
     >
       <div
         className={`${
@@ -185,7 +199,11 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
           >
             {isDarkTheme ? "☀️ Light" : "🌙 Dark"}
           </button>
-          <span className={`${isDarkTheme ? "text-amber-100" : "text-amber-800"} font-semibold`}>
+          <span
+            className={`${
+              isDarkTheme ? "text-amber-100" : "text-amber-800"
+            } font-semibold`}
+          >
             Cookie Shell v1.0
           </span>
         </div>
@@ -193,8 +211,10 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
 
       <div
         ref={terminalRef}
-        className={`p-4 h-96 overflow-y-auto font-mono text-base font- ${
-          isDarkTheme ? "bg-[#694127]" : "bg-gradient-to-b from-amber-50 to-orange-50"
+        className={`p-4 h-96 overflow-y-auto font-mono text-base ${
+          isDarkTheme
+            ? "bg-[#694127]"
+            : "bg-gradient-to-b from-amber-50 to-orange-50"
         }`}
         style={{ fontFamily: 'Monaco, Consolas, "Courier New", monospace' }}
       >
@@ -202,15 +222,21 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
 
         {isActive && (
           <div className="flex items-center">
-            <span className={`${isDarkTheme ? "text-amber-300 text-xl font-cookie" : "text-amber-700"} font-semibold mr-2 text-xl font-cookie`}>
-              cookie 🍪 ~ $
+            <span
+              className={`${
+                isDarkTheme
+                  ? "text-amber-300 text-base font-cookie"
+                  : "text-amber-700"
+              } font-semibold mr-2 text-base font-cookie`}
+            >
+              cookie 🍪 ~ {currentFolder} $
             </span>
             <input
               ref={inputRef}
               type="text"
               value={currentInput}
               onChange={(e) => setCurrentInput(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
               className={`flex-1 bg-transparent outline-none ${
                 isDarkTheme ? "text-amber-100" : "text-amber-900"
               } caret-transparent`}
@@ -227,5 +253,5 @@ export function Terminal({ isDarkTheme, setIsDarkTheme }: TerminalProps) {
         )}
       </div>
     </div>
-  )
+  );
 }
