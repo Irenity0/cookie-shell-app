@@ -3,7 +3,10 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Cookie Shell App',
-  description: 'A deliciously interactive terminal experience'
+  description: 'A deliciously interactive terminal experience',
+  icons: { 
+    icon: '/logo.png',  
+  }
 }
 
 export default function RootLayout({
